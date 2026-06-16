@@ -1,0 +1,84 @@
+package db;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class deletesevlet
+ */
+@WebServlet("/deletesevlet")
+public class deletesevlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public deletesevlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		//doGet(request, response);
+		PrintWriter out=response.getWriter();
+		int pid=Integer.parseInt(request.getParameter("id"));
+		try
+		{
+			Class.forName("com.mysql.cj.jdbc.Driver");
+
+			Connection con = DriverManager.getConnection(
+					"jdbc:mysql://localhost:3306/jdbc",
+					"root",
+					"sravanthi");
+
+			PreparedStatement pst =
+					con.prepareStatement("delete from product where pid=?");
+
+			pst.setInt(1, pid);
+
+			int rows = pst.executeUpdate();
+
+			response.setContentType("text/html");
+
+			if (rows > 0) {
+				out.print("Record Deleted Successfully");
+			} else {
+				out.print("No Record Found with ID " + pid);
+			}
+
+			out.print("<br><br>");
+			out.print("<a href='index.html'>Go Back</a>");
+
+			pst.close();
+			con.close();
+
+		
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+}
